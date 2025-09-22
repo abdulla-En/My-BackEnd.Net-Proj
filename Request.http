@@ -1,56 +1,102 @@
+### GET root
+GET http://localhost:5179/
+Accept: application/json
+
+###
+
 ### GET all users
 GET http://localhost:5179/users
 Accept: application/json
 
 ###
 
-### GET user by ID (replace with actual ID)
-GET http://localhost:5179/users/f76a4e08-1995-4ec2-9d60-cdffc709ea50
+### POST new user
+POST http://localhost:5179/signup
+Content-Type: application/json
+
+{
+  "name": "hady",
+  "email": "hady@example.com",
+  "passwordHash": "hadySecurePassword123"
+}
+
+###
+
+### POST duplicate email (should fail)
+POST http://localhost:5179/signup
+Content-Type: application/json
+
+{
+  "name": "Duplicate",
+  "email": "abdulla@example.com",
+  "passwordHash": "AnotherPassword456"
+}
+
+###
+
+### GET user by ID 
+GET http://localhost:5179/users/9b57d29d-8565-420c-a959-3b4bdc166750
 Accept: application/json
 
 ###
 
-### POST new user
-POST http://localhost:5179/users
+### GET user by email
+GET http://localhost:5179/users/by-email/hady@example.com
+Accept: application/json
+
+###
+
+### SEARCH users by name
+GET http://localhost:5179/users/search?name=ha
+Accept: application/json
+
+###
+
+### PUT update user 
+PUT http://localhost:5179/users/9b57d29d-8565-420c-a959-3b4bdc166750
 Content-Type: application/json
 
 {
-  "name": "Ali",
-  "email": "Ali@example.com",
-  "passwordHash": "AliPassword123"
+  "name": "hady Updated",
+  "email": "hady.updated@example.com",
+  "passwordHash": "hadySecurePassword789"
 }
 
 ###
 
-### PUT update user (replace ID)
-PUT http://localhost:5179/users/0255257c-d30e-4ac8-ba01-94509db2c711
+### PUT with same password (should fail)
+PUT http://localhost:5179/users/9b57d29d-8565-420c-a959-3b4bdc166750
 Content-Type: application/json
 
 {
-  "name": "Abdulla Updated",
-  "email": "abdulla.updated@example.com",
-  "passwordHash": "newPassword123"
-}
-
-###
-
-### PUT non-existent user (should fail)
-PUT http://localhost:5179/users/00000000-0000-0000-0000-000000000000
-Content-Type: application/json
-
-{
-  "id": "00000000-0000-0000-0000-000000000000",
-  "name": "Ghost",
-  "email": "ghost@example.com",
-  "passwordHash": "ghostPassword"
+  "name": "hady Updated2",
+  "email": "hady2.updated@example.com",
+  "passwordHash": "hadySecurePassword123"
 }
 
 ###
 
 ### DELETE user (replace ID)
-DELETE http://localhost:5179/users/f76a4e08-1995-4ec2-9d60-cdffc709ea50
+DELETE http://localhost:5179/users/ac4ab1cb-6408-4c26-87d0-c9c7bf430931
 
 ###
 
-### DELETE non-existent user (should fail)
-DELETE http://localhost:5179/users/00000000-0000-0000-0000-000000000000
+### LOGIN with correct credentials
+POST http://localhost:5179/login
+Content-Type: application/json
+
+{
+  "email": "abdulla@example.com",
+  "password": "MySecurePassword123"
+}
+
+###
+
+### LOGIN with wrong password (should fail)
+POST http://localhost:5179/login
+Content-Type: application/json
+
+{
+  "email": "abdulla@example.com",
+  "password": "WrongPassword"
+}
