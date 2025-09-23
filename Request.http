@@ -1,30 +1,50 @@
-### GET root
+### GET root (public)
 GET http://localhost:5179/
 Accept: application/json
 
 ###
 
-### GET all users
-GET http://localhost:5179/users
-Accept: application/json
+### POST /signup (valid - requires token)
+POST http://localhost:5179/signup
+Content-Type: application/json
+Authorization: Bearer my-secret-token
 
-###
+{
+  "name": "Abdulla",
+  "email": "abdulla@example.com",
+  "passwordHash": "MySecurePassword123"
+}
 
-### POST new user
+### POST /signup (valid - no token)
 POST http://localhost:5179/signup
 Content-Type: application/json
 
 {
-  "name": "hady",
-  "email": "hady@example.com",
-  "passwordHash": "hadySecurePassword123"
+  "name": "Abdulla",
+  "email": "abdulla@example.com",
+  "passwordHash": "MySecurePassword123"
+}
+
+
+###
+
+### POST /signup (missing fields - should fail)
+POST http://localhost:5179/signup
+Content-Type: application/json
+Authorization: Bearer my-secret-token
+
+{
+  "name": "",
+  "email": "",
+  "passwordHash": ""
 }
 
 ###
 
-### POST duplicate email (should fail)
+### POST /signup (duplicate email - should fail)
 POST http://localhost:5179/signup
 Content-Type: application/json
+Authorization: Bearer my-secret-token
 
 {
   "name": "Duplicate",
@@ -34,56 +54,10 @@ Content-Type: application/json
 
 ###
 
-### GET user by ID 
-GET http://localhost:5179/users/9b57d29d-8565-420c-a959-3b4bdc166750
-Accept: application/json
-
-###
-
-### GET user by email
-GET http://localhost:5179/users/by-email/hady@example.com
-Accept: application/json
-
-###
-
-### SEARCH users by name
-GET http://localhost:5179/users/search?name=ha
-Accept: application/json
-
-###
-
-### PUT update user 
-PUT http://localhost:5179/users/9b57d29d-8565-420c-a959-3b4bdc166750
-Content-Type: application/json
-
-{
-  "name": "hady Updated",
-  "email": "hady.updated@example.com",
-  "passwordHash": "hadySecurePassword789"
-}
-
-###
-
-### PUT with same password (should fail)
-PUT http://localhost:5179/users/9b57d29d-8565-420c-a959-3b4bdc166750
-Content-Type: application/json
-
-{
-  "name": "hady Updated2",
-  "email": "hady2.updated@example.com",
-  "passwordHash": "hadySecurePassword123"
-}
-
-###
-
-### DELETE user (replace ID)
-DELETE http://localhost:5179/users/ac4ab1cb-6408-4c26-87d0-c9c7bf430931
-
-###
-
-### LOGIN with correct credentials
+### POST /login (valid credentials - requires token)
 POST http://localhost:5179/login
 Content-Type: application/json
+Authorization: Bearer my-secret-token
 
 {
   "email": "abdulla@example.com",
@@ -92,11 +66,109 @@ Content-Type: application/json
 
 ###
 
-### LOGIN with wrong password (should fail)
+### POST /login (wrong password - should fail)
 POST http://localhost:5179/login
 Content-Type: application/json
+Authorization: Bearer my-secret-token
 
 {
   "email": "abdulla@example.com",
   "password": "WrongPassword"
 }
+
+###
+
+### GET all users (public)
+GET http://localhost:5179/users
+Accept: application/json
+
+###
+
+### GET user by ID (valid - public) — replace ID
+GET http://localhost:5179/users/3fa85f64-5717-4562-b3fc-2c963f66afa6
+Accept: application/json
+
+###
+
+### GET user by ID (invalid - should fail)
+GET http://localhost:5179/users/00000000-0000-0000-0000-000000000000
+Accept: application/json
+
+###
+
+### GET user by email (valid - public)
+GET http://localhost:5179/users/by-email/abdulla@example.com
+Accept: application/json
+
+###
+
+### GET user by email (invalid - should fail)
+GET http://localhost:5179/users/by-email/unknown@example.com
+Accept: application/json
+
+###
+
+### GET search users by name (match - public)
+GET http://localhost:5179/users/search?name=abd
+Accept: application/json
+
+###
+
+### GET search users by name (no match - should fail)
+GET http://localhost:5179/users/search?name=xyz
+Accept: application/json
+
+###
+
+### PUT update user (valid - requires token) — replace ID
+PUT http://localhost:5179/users/3fa85f64-5717-4562-b3fc-2c963f66afa6
+Content-Type: application/json
+Authorization: Bearer my-secret-token
+
+{
+  "name": "Abdulla Updated",
+  "email": "abdulla.updated@example.com",
+  "passwordHash": "NewSecurePassword456"
+}
+
+###
+
+### PUT update user (same password - should fail)
+PUT http://localhost:5179/users/3fa85f64-5717-4562-b3fc-2c963f66afa6
+Content-Type: application/json
+Authorization: Bearer my-secret-token
+
+{
+  "name": "Abdulla Updated",
+  "email": "abdulla.updated@example.com",
+  "passwordHash": "MySecurePassword123"
+}
+
+###
+
+### PUT update user (missing token - should fail)
+PUT http://localhost:5179/users/3fa85f64-5717-4562-b3fc-2c963f66afa6
+Content-Type: application/json
+
+{
+  "name": "No Token",
+  "email": "notoken@example.com",
+  "passwordHash": "NewPassword789"
+}
+
+###
+
+### DELETE user (valid - requires token) — replace ID
+DELETE http://localhost:5179/users/3fa85f64-5717-4562-b3fc-2c963f66afa6
+Authorization: Bearer my-secret-token
+
+###
+
+### DELETE user (invalid token - should fail)
+DELETE http://localhost:5179/users/3fa85f64-5717-4562-b3fc-2c963f66afa6
+Authorization: Bearer wrong-token
+
+###
+
+### DELETE user (missing token - should fail)
+DELETE http://localhost:5179/users/3fa85f64-5717-4562-b3fc-2c963f66afa6
